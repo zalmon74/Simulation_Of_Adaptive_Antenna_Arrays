@@ -25,7 +25,7 @@ for ind_sig = 1:count_sig
   for ind_el_ver = 1:count_el_ver
     % Цикл перебора элементов по горизонтали
     for ind_el_hor = 1:count_el_hor
-      vec_wave_front(ind_sig, num_el) = exp(-j*k(ind_sig)*(x_coor(ind_el_ver, ind_el_ver)*sin(theta(ind_sig))*cos(fi(ind_sig))+y_coor(ind_el_ver, ind_el_ver)*sin(theta(ind_sig))*sin(fi(ind_sig))))*dir_diag_el(ind_sig);
+      vec_wave_front(ind_sig, num_el) = exp(-j*k(ind_sig)*(x_coor(ind_el_ver, ind_el_ver)*sin(theta(ind_sig))*cos(fi(ind_sig))+y_coor(ind_el_ver, ind_el_ver)*sin(theta(ind_sig))*sin(fi(ind_sig))));
       % Инкрементируем номер элемента в АР
       num_el = num_el + 1;
     end

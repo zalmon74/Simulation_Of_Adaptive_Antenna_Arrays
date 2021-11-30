@@ -25,6 +25,8 @@ fi_noise_sig_2 = 30;
 vec_fi_noise_sig = [fi_noise_sig_1, fi_noise_sig_2]*pi/180;
 % Мощность помеховый сигналов
 P_noise = 1.0e-6;
+% Вектор с углами для которых необходимо посчитать ДНА 
+vec_theta = (-90:90)*pi/180;
 
 %% Расчеты
 % Формируем двумерную АР
@@ -32,6 +34,7 @@ P_noise = 1.0e-6;
                                                       count_el_ver,...
                                                       step_x_coor ,...
                                                       step_y_coor);
+                                                  
 % Вычисляем элементы вектора волнового фронта полезного сигнала
 vec_wave_front_sig = CalculationVecWaveFront(lym_sig, x_coor_el, y_coor_el, theta_useful_sig, fi_useful_sig);
 % Вычисляем элементы вектора волнового фронта помеховых сигналов
@@ -45,11 +48,13 @@ vec_wave_front_noise = vec_wave_front_noise';
 mat_corr_noise = FormationCorrelationMatrix(vec_wave_front_noise, P_noise);
 % Рассчитываем оптимальный весовой коэффициент
 vec_weig_coef = CalculationWeightCoeff(mat_corr_noise, vec_wave_front_sig);
-% Итоговое выражение для ДН АР
-vec_theta = (-90:90)*pi/180;
+% Рассчитываем итоговое выражение для ДН АР
 dir_diag = CalculationArrayDirectionalDiagramAntennaArray(x_coor_el, y_coor_el, vec_theta,...
                                                           fi_useful_sig, k_sig, vec_weig_coef);
-
+% Рассчитываем исходную ДНА
+for i = 1:length(vec_theta)
+    dir_diag_s(i) = sum(CalculationVecWaveFront(lym_sig, x_coor_el, y_coor_el, vec_theta(i), fi_useful_sig));
+end
 %% Построение графиков
 % Построение АР
 figure
@@ -65,8 +70,12 @@ hold off
 title 'Сформированная АР'
 % Построение результирующей ДН адаптивной АР
 figure
-plot(vec_theta, abs(dir_diag))
+hold 
+plot(vec_theta*180/pi, abs(dir_diag_s/max(dir_diag_s)))
+plot(vec_theta*180/pi, abs(dir_diag), '--')
+hold off
 title 'ДН адаптивной АР'
 xlabel '\theta'
 grid on
+legend 'Исходная ДНА' 'ДНА адаптивной АР' 
                                                       
